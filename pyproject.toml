@@ -27,7 +27,12 @@ license = "MIT"
 authors = [{ name = "Gustavo Amaral"}]
 requires-python = ">=3.13"
 dependencies = [
+    "cs50>=9.4.0",
+    "flask>=3.1.2",
+    "flask-session>=0.8.0",
     "python-dotenv>=1.1.0",
+    "redis>=7.1.0",
+    "requests>=2.32.5",
 ]
 
 [project.urls]

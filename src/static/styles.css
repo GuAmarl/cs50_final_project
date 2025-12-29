@@ -3,16 +3,15 @@ nav .navbar-brand {
   font-size: xx-large;
 }
 
-/* Colors for brand */
-nav .navbar-brand .blue {
-  color: #537fbe;
+.list-group {
+  justify-content: center;
 }
-nav .navbar-brand .red {
-  color: #ea433b;
+
+.list-group-item {
+  width: 20rem;
 }
-nav .navbar-brand .yellow {
-  color: #f5b82e;
-}
-nav .navbar-brand .green {
-  color: #2e944b;
-}
+
+/* #card-div {
+  display: flex;
+  align-items: center;
+} */

@@ -62,7 +62,7 @@ def login() -> str | WerkzeugResponse | tuple[Any, int]:
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(  # type: ignore
-            rows[0]["hash"],  # type: ignore
+            rows[0]["password_hash"],  # type: ignore
             request.form.get("password"),  # type: ignore
         ):
             flash("Invalid username and/or password", "danger")
@@ -127,7 +127,7 @@ def register() -> WerkzeugResponse | str | None:
         # If user doesn't exists, create one
         if not user_exists:
             db.execute(  # type: ignore
-                "INSERT INTO users(username, hash) VALUES(?, ?)",
+                "INSERT INTO users(username, password_hash) VALUES(?, ?)",
                 username,
                 password,  # type: ignore
             )
@@ -137,6 +137,25 @@ def register() -> WerkzeugResponse | str | None:
     else:
         return render_template("register.html")
     return None
+
+
+@app.route("/decks", methods=["GET", "POST"])  # type: ignore
+def decks() -> WerkzeugResponse | str | None:
+    if request.method == "POST":
+        new_deck = request.form.get("name_deck")  # type: ignore
+        print(new_deck)
+
+    decks = db.execute("SELECT * FROM decks WHERE user_id = ?", session["user_id"])  # type: ignore
+
+    return render_template("decks.html", decks=decks)
+
+
+@app.route("/cards", methods=["GET", "POST"])  # type: ignore
+def cards() -> WerkzeugResponse | str | None:
+    if request.method == "POST":
+        pass
+
+    return render_template("cards.html")
 
 
 if __name__ == "__main__":

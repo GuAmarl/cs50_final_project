@@ -1,0 +1,39 @@
+{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
+%}
+
+<ul class="list-group list-group-horizontal">
+  {% for deck in decks %}
+  <li class="list-group-item list-group-item-secondary me-2">
+    {{ deck.name }}
+  </li>
+  {% endfor %}
+  <form action="/decks" method="post">
+    <li class="list-group-item list-group-item-secondary">
+      <div class="card">
+        <div class="card-header">
+          <input
+            autocomplete="off"
+            autofocus
+            class="form-control mx-auto w-auto"
+            name="name_deck"
+            placeholder="Decks' Name"
+            type="text"
+          />
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Special title treatment</h5>
+          <p class="card-text">
+            With supporting text below as a natural lead-in to additional
+            content.
+          </p>
+          <a type="submit" class="btn btn-success" href="/cards">
+            <i class="bi bi-plus"></i>
+            Add Deck
+          </a>
+        </div>
+      </div>
+    </li>
+  </form>
+</ul>
+
+{% endblock %}

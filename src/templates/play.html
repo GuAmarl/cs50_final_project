@@ -1,0 +1,41 @@
+{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
+%}
+
+<div class="deck-container">
+  <div class="deck-wrapper">
+    <!-- Cartas do fundo -->
+    <div class="card deck-card back-2"></div>
+    <div class="card deck-card back-1"></div>
+    <div class="card flashcard text-dark bg-light">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <!-- Coluna esquerda (vazia) -->
+          <div class="col-3"></div>
+
+          <!-- Texto central -->
+          <div class="col-4 text-center fw-semibold">deck name</div>
+
+          <!-- Badge à direita -->
+          <div class="col-5 text-end">
+            <span class="badge bg-secondary ms-auto">
+              <i class="bi bi-file-fill"></i>
+              8 Cards
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- <h5 class="card-title">Special title treatment</h5> -->
+        <p class="flashcard-question">O que é uma lista em Python?</p>
+        <div class="flashcard-answer mb-2">
+          Uma lista é uma estrutura de dados mutável que armazena elementos de
+          forma ordenada.
+        </div>
+        <div class="d-grid gap-2 d-md-block">
+          <button class="btn btn-sm btn-primary">Answer</button>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </div>
+</div>

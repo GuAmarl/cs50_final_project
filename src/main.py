@@ -154,7 +154,11 @@ def register() -> WerkzeugResponse | str | None:
 
 @app.route("/decks")  # type: ignore
 def decks() -> str:
-    decks = db.execute("SELECT * FROM decks WHERE user_id = ?", session["user_id"])  # type: ignore
+    decks = db.execute(  # type: ignore
+        "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
+        "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
+        session["user_id"],
+    )
 
     return render_template("decks.html", decks=decks)
 
@@ -165,12 +169,16 @@ def create_deck() -> tuple[Response, Any]:
     name = data.get("name")
 
     if not name:
-        return jsonify({"error": "Nome é obrigatório"}), 400
+        return jsonify({"error": "Must provide name"}), 400
 
     db.execute(  # type: ignore
         "INSERT INTO decks(user_id, name) VALUES(?, ?)", session["user_id"], name
     )
-    deck = db.execute("SELECT * FROM decks WHERE user_id = ?", session["user_id"])  # type: ignore
+    deck = db.execute(  # type: ignore
+        "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
+        "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
+        session["user_id"],
+    )
 
     return jsonify(deck), 201
 
@@ -184,11 +192,8 @@ def delete_deck(deck_id: int) -> Response:
     return jsonify({"success": True})
 
 
-@app.route("/cards/<int:deck_id>", methods=["GET", "POST"])  # type: ignore
+@app.route("/cards/<int:deck_id>")  # type: ignore
 def cards(deck_id: int) -> WerkzeugResponse | str | None:
-    if request.method == "POST":
-        pass
-
     cards = db.execute(  # type: ignore
         "SELECT id, front, back, deck_id FROM cards WHERE deck_id = ?", deck_id
     )
@@ -205,6 +210,9 @@ def create_cards() -> tuple[Response, Any]:
 
     if not front or not back:
         return jsonify({"error": "Missing inputs"}), 400
+
+    front = front.upper()
+    back = back.upper()
 
     now = int(time.time())
     due = now + LEARNING_STEPS[0] * 60
@@ -236,10 +244,8 @@ def search() -> Response:
     query = request.args.get("q")
     deck_id = request.args.get("deck_id")
 
-    print(query)
-    print(deck_id)
-
     if query and deck_id:
+        query = query.upper()
         cards = db.execute(  # type: ignore
             "SELECT front, back FROM cards WHERE deck_id = ? AND front LIKE ?",
             deck_id,
@@ -251,6 +257,11 @@ def search() -> Response:
         )
 
     return jsonify(cards)
+
+
+@app.route("/play/<int:deck_id>")  # type: ignore
+def play(deck_id: int) -> WerkzeugResponse | str | None:
+    return render_template("play.html")
 
 
 if __name__ == "__main__":

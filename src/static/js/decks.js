@@ -26,23 +26,41 @@ document.addEventListener("DOMContentLoaded", function () {
     li.className = "list-group-item list-group-item-secondary me-2";
 
     li.innerHTML = `
-    <div class="card">
-      <div class="card-header">${deck[deck.length - 1].name}</div>
-      <div class="card-body">
-        <p class="card-text">This is a deck</p>
-        <div class="d-grid gap-2 d-md-block">
-          <button type="button" class="btn btn-sm btn-success">
-            Play
-            <i class="bi bi-play-fill"></i>
-          </button>
-          <button type="button" class="btn btn-sm btn-primary">
-            Inspect
-            <img id="img_icon" src="static/img/cartas.png" class="img-fluid" />
-          </button>
-          <button type="button" class="btn btn-sm btn-danger delete-deck">
-            Del Deck
-            <i class="bi bi-trash"></i>
-          </button>
+    <div class="card flashcard text-dark bg-light">
+      <div class="deck-container">
+        <div class="deck-wrapper">
+          <div class="card deck-card back-2"></div>
+          <div class="card deck-card back-1"></div>
+          <div class="card-header">${deck[deck.length - 1].name}</div>
+          <div class="card-body">
+            <p class="card-text">This is a deck</p>
+            <div class="d-grid gap-2 d-md-block">
+              <a
+                type="button"
+                class="btn btn-sm btn-success"
+                href="{{url_for('play', deck_id = deck.id)}}"
+              >
+                Play
+                <i class="bi bi-play-fill"></i>
+              </a>
+              <a
+                type="button"
+                class="btn btn-sm btn-primary d-inline-flex align-items-center"
+                href="{{url_for('cards', deck_id = deck.id)}}"
+              >
+                Inspect
+                <span class="icon-deck me-1">
+                  <i class="bi bi-file-fill"></i>
+                  <i class="bi bi-file-fill"></i>
+                  <i class="bi bi-file-fill"></i>
+                </span>
+              </a>
+              <button type="button" class="btn btn-sm btn-danger delete-deck">
+                Del Deck
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

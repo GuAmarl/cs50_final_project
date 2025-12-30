@@ -17,11 +17,108 @@ nav .navbar-brand {
   filter: brightness(0) invert(1);
 }
 
-/* .card {
-  height: 15rem;
-} */
+.list-group-clean .list-group-item {
+  background-color: transparent;
+  border: none;
+}
 
-/* #card-div {
+.deck-container {
+  min-height: 60vh;
   display: flex;
   align-items: center;
-} */
+  justify-content: center;
+}
+
+.deck-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+}
+
+.deck-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Cartas de trás */
+.deck-card.back-1 {
+  transform: translate(10px, 10px);
+  opacity: 0.6;
+  z-index: 1;
+}
+
+.deck-card.back-2 {
+  transform: translate(20px, 20px);
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.flashcard {
+  position: relative;
+  z-index: 2;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.flashcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
+}
+
+.flashcard-tag {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background-color: #e9ecef;
+  color: #495057;
+  font-weight: 500;
+}
+
+.flashcard-question {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.flashcard-answer {
+  font-size: 0.95rem;
+  color: #495057;
+  border-left: 3px solid #0d6efd;
+  padding-left: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.flashcard-footer button {
+  font-size: 0.85rem;
+}
+
+.icon-deck {
+  position: relative;
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  vertical-align: text-bottom;
+}
+
+.icon-deck i {
+  position: absolute;
+  font-size: 0.8em;
+  line-height: 0.8;
+  color: currentColor;
+}
+
+/* cartas saem pela direita */
+.icon-deck i:nth-child(1) {
+  transform: translate(2px, 2px);
+  opacity: 0.4;
+}
+
+.icon-deck i:nth-child(2) {
+  transform: translate(1.5px, 1.5px);
+  opacity: 0.6;
+}

@@ -2,31 +2,62 @@
 <script src="{{ url_for('static', filename='js/decks.js') }}"></script>
 {% endblock %} {% block title %} Index {% endblock %} {% block main %}
 
-<ul id="deck-list" class="list-group list-group-horizontal">
+<ul id="deck-list" class="list-group list-group-clean list-group-horizontal">
   {% for deck in decks %}
   <li data-id="{{ deck.id }}" class="list-group-item list-group-item-secondary">
-    <div class="card text-dark bg-light">
-      <div class="card-header">{{ deck.name }}</div>
-      <div class="card-body">
-        <!-- <h5 class="card-title">Special title treatment</h5> -->
-        <p class="card-text">This is a deck</p>
-        <div class="d-grid gap-2 d-md-block">
-          <button type="button" class="btn btn-sm btn-success">
-            Play
-            <i class="bi bi-play-fill"></i>
-          </button>
-          <a
-            type="button"
-            class="btn btn-sm btn-primary"
-            href="{{url_for('cards', deck_id = deck.id)}}"
-          >
-            Inspect
-            <img id="img_icon" src="static/img/cartas.png" class="img-fluid" />
-          </a>
-          <button type="button" class="btn btn-sm btn-danger delete-deck">
-            Del Deck
-            <i class="bi bi-trash"></i>
-          </button>
+    <div class="deck-container">
+      <div class="deck-wrapper">
+        <!-- Cartas do fundo -->
+        <div class="card deck-card back-2"></div>
+        <div class="card deck-card back-1"></div>
+        <div class="card flashcard text-dark bg-light">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <!-- Coluna esquerda (vazia) -->
+              <div class="col-3"></div>
+
+              <!-- Texto central -->
+              <div class="col-4 text-center fw-semibold">{{ deck.name }}</div>
+
+              <!-- Badge à direita -->
+              <div class="col-5 text-end">
+                <span class="badge bg-secondary ms-auto">
+                  <i class="bi bi-file-fill"></i>
+                  {{deck.card_count}} Cards
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- <h5 class="card-title">Special title treatment</h5> -->
+            <p class="card-text">This is a deck</p>
+            <div class="d-grid gap-2 d-md-block">
+              <a
+                type="button"
+                class="btn btn-sm btn-success"
+                href="{{url_for('play', deck_id = deck.id)}}"
+              >
+                Play
+                <i class="bi bi-play-fill"></i>
+              </a>
+              <a
+                type="button"
+                class="btn btn-sm btn-primary d-inline-flex align-items-center"
+                href="{{url_for('cards', deck_id = deck.id)}}"
+              >
+                Inspect
+                <span class="icon-deck me-1">
+                  <i class="bi bi-file-fill"></i>
+                  <i class="bi bi-file-fill"></i>
+                  <i class="bi bi-file-fill"></i>
+                </span>
+              </a>
+              <button type="button" class="btn btn-sm btn-danger delete-deck">
+                Del Deck
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -34,25 +65,31 @@
   {% endfor %}
 
   <li class="list-group-item list-group-item-secondary">
-    <div class="card text-dark bg-light">
-      <div class="card-header">
-        <input
-          id="deck-name"
-          autocomplete="off"
-          autofocus
-          class="form-control mx-auto w-auto"
-          name="deck-name"
-          placeholder="Decks' Name"
-          type="text"
-        />
-      </div>
-      <div class="card-body">
-        <!-- <h5 class="card-title">Special title treatment</h5> -->
-        <p class="card-text">Create a deck to study something.</p>
-        <button id="add-deck" type="button" class="btn btn-sm btn-success">
-          <i class="bi bi-plus"></i>
-          Add Deck
-        </button>
+    <div class="deck-container">
+      <div class="deck-wrapper">
+        <div class="card deck-card back-2"></div>
+        <div class="card deck-card back-1"></div>
+        <div class="card flashcard text-dark bg-light">
+          <div class="card-header">
+            <input
+              id="deck-name"
+              autocomplete="off"
+              autofocus
+              class="form-control form-control-sm mx-auto w-auto"
+              name="deck-name"
+              placeholder="Decks' Name"
+              type="text"
+            />
+          </div>
+          <div class="card-body">
+            <!-- <h5 class="card-title">Special title treatment</h5> -->
+            <p class="card-text">Create a deck to study something.</p>
+            <button id="add-deck" type="button" class="btn btn-sm btn-success">
+              <i class="bi bi-plus"></i>
+              Add Deck
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </li>

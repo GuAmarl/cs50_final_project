@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   let input = document.getElementById("search_card_input");
-  alert(input.value);
   input.addEventListener("input", async function () {
     // async function search_cards() {
     const input = document.getElementById("search_card_input");
@@ -69,9 +68,43 @@ document.addEventListener("DOMContentLoaded", function () {
     let html = "";
 
     for (let i in cards) {
-      html += `<tr><td>${cards[i].front}</td><td>${cards[i].back}</td></tr>`;
+      html += `<tr><td>${cards[i].front}</td><td>${cards[i].back}</td><td>
+        <button id=${cards[i].id} type="button" class="btn btn-sm btn-danger delete-card">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td></tr>`;
     }
 
     table_body.innerHTML = html;
   });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("table_cards")
+    .addEventListener("click", async (event) => {
+      const deleteBtn = event.target.closest(".delete-card");
+      if (!deleteBtn) return;
+
+      const cardId = deleteBtn.id;
+      const row = deleteBtn.closest("tr");
+
+      // if (!confirm("Deseja realmente deletar este card?")) return;
+
+      try {
+        const response = await fetch(`/api/delete_card/${cardId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          alert("Erro ao deletar card");
+          return;
+        }
+
+        // Remove from table (DOM)
+        row.remove();
+      } catch (error) {
+        alert("Erro de conexão com o servidor");
+      }
+    });
 });

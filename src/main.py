@@ -190,7 +190,7 @@ def cards(deck_id: int) -> WerkzeugResponse | str | None:
         pass
 
     cards = db.execute(  # type: ignore
-        "SELECT front, back, deck_id FROM cards WHERE deck_id = ?", deck_id
+        "SELECT id, front, back, deck_id FROM cards WHERE deck_id = ?", deck_id
     )
 
     return render_template("cards.html", cards=cards, deck_id=deck_id)
@@ -217,9 +217,18 @@ def create_cards() -> tuple[Response, Any]:
         "learning",
         due,  # type: ignore
     )
-    deck = db.execute("SELECT * FROM cards WHERE deck_id = ?", deck_id)  # type: ignore
+    cards = db.execute("SELECT * FROM cards WHERE deck_id = ?", deck_id)  # type: ignore
 
-    return jsonify(deck), 201
+    return jsonify(cards), 201
+
+
+@app.route("/api/delete_card/<int:card_id>", methods=["DELETE"])
+def delete_card(card_id: int) -> Response:
+    db.execute(  # type: ignore
+        "DELETE FROM cards WHERE id = ?", card_id
+    )
+
+    return jsonify({"success": True})
 
 
 @app.route("/api/search")

@@ -60,6 +60,15 @@
     <tr>
       <td>{{card.front}}</td>
       <td>{{card.back}}</td>
+      <td>
+        <button
+          id="{{card.id}}"
+          type="button"
+          class="btn btn-sm btn-danger delete-card"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

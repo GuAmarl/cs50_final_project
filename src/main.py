@@ -1,7 +1,18 @@
+import time
 from typing import Any
 
 from cs50 import SQL  # type: ignore
-from flask import Flask, Response, flash, redirect, render_template, request, session
+from flask import (  # noqa: F401
+    Flask,
+    Response,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,  # type: ignore
+)
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.wrappers import Response as WerkzeugResponse
 
@@ -10,6 +21,8 @@ from helpers import login_required
 
 # Configure application
 app = Flask(__name__)
+
+LEARNING_STEPS = [10, 60, 1440]  # minutes
 
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -139,23 +152,96 @@ def register() -> WerkzeugResponse | str | None:
     return None
 
 
-@app.route("/decks", methods=["GET", "POST"])  # type: ignore
-def decks() -> WerkzeugResponse | str | None:
-    if request.method == "POST":
-        new_deck = request.form.get("name_deck")  # type: ignore
-        print(new_deck)
-
+@app.route("/decks")  # type: ignore
+def decks() -> str:
     decks = db.execute("SELECT * FROM decks WHERE user_id = ?", session["user_id"])  # type: ignore
 
     return render_template("decks.html", decks=decks)
 
 
-@app.route("/cards", methods=["GET", "POST"])  # type: ignore
-def cards() -> WerkzeugResponse | str | None:
+@app.route("/api/create_decks", methods=["POST"])  # type: ignore
+def create_deck() -> tuple[Response, Any]:
+    data = request.get_json()
+    name = data.get("name")
+
+    if not name:
+        return jsonify({"error": "Nome é obrigatório"}), 400
+
+    db.execute(  # type: ignore
+        "INSERT INTO decks(user_id, name) VALUES(?, ?)", session["user_id"], name
+    )
+    deck = db.execute("SELECT * FROM decks WHERE user_id = ?", session["user_id"])  # type: ignore
+
+    return jsonify(deck), 201
+
+
+@app.route("/api/delete_deck/<int:deck_id>", methods=["DELETE"])
+def delete_deck(deck_id: int) -> Response:
+    db.execute(  # type: ignore
+        "DELETE FROM decks WHERE user_id = ? AND id = ?", session["user_id"], deck_id
+    )
+
+    return jsonify({"success": True})
+
+
+@app.route("/cards/<int:deck_id>", methods=["GET", "POST"])  # type: ignore
+def cards(deck_id: int) -> WerkzeugResponse | str | None:
     if request.method == "POST":
         pass
 
-    return render_template("cards.html")
+    cards = db.execute(  # type: ignore
+        "SELECT front, back, deck_id FROM cards WHERE deck_id = ?", deck_id
+    )
+
+    return render_template("cards.html", cards=cards, deck_id=deck_id)
+
+
+@app.route("/api/create_cards", methods=["POST"])  # type: ignore
+def create_cards() -> tuple[Response, Any]:
+    data = request.get_json()
+    front = data.get("front")
+    back = data.get("back")
+    deck_id = data.get("deck_id")
+
+    if not front or not back:
+        return jsonify({"error": "Missing inputs"}), 400
+
+    now = int(time.time())
+    due = now + LEARNING_STEPS[0] * 60
+
+    db.execute(  # type: ignore
+        "INSERT INTO cards(deck_id, front, back, state, due) VALUES(?, ?, ?, ?, ?)",
+        deck_id,
+        front,
+        back,
+        "learning",
+        due,  # type: ignore
+    )
+    deck = db.execute("SELECT * FROM cards WHERE deck_id = ?", deck_id)  # type: ignore
+
+    return jsonify(deck), 201
+
+
+@app.route("/api/search")
+def search() -> Response:
+    query = request.args.get("q")
+    deck_id = request.args.get("deck_id")
+
+    print(query)
+    print(deck_id)
+
+    if query and deck_id:
+        cards = db.execute(  # type: ignore
+            "SELECT front, back FROM cards WHERE deck_id = ? AND front LIKE ?",
+            deck_id,
+            "%" + query + "%",
+        )
+    else:
+        cards = db.execute(  # type: ignore
+            "SELECT front, back FROM cards WHERE deck_id = ?", deck_id
+        )
+
+    return jsonify(cards)
 
 
 if __name__ == "__main__":

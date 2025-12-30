@@ -1,39 +1,61 @@
-{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
-%}
+{% extends "layout.html" %} {% block js %}
+<script src="{{ url_for('static', filename='js/decks.js') }}"></script>
+{% endblock %} {% block title %} Index {% endblock %} {% block main %}
 
-<ul class="list-group list-group-horizontal">
+<ul id="deck-list" class="list-group list-group-horizontal">
   {% for deck in decks %}
-  <li class="list-group-item list-group-item-secondary me-2">
-    {{ deck.name }}
-  </li>
-  {% endfor %}
-  <form action="/decks" method="post">
-    <li class="list-group-item list-group-item-secondary">
-      <div class="card">
-        <div class="card-header">
-          <input
-            autocomplete="off"
-            autofocus
-            class="form-control mx-auto w-auto"
-            name="name_deck"
-            placeholder="Decks' Name"
-            type="text"
-          />
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">
-            With supporting text below as a natural lead-in to additional
-            content.
-          </p>
-          <a type="submit" class="btn btn-success" href="/cards">
-            <i class="bi bi-plus"></i>
-            Add Deck
+  <li data-id="{{ deck.id }}" class="list-group-item list-group-item-secondary">
+    <div class="card text-dark bg-light">
+      <div class="card-header">{{ deck.name }}</div>
+      <div class="card-body">
+        <!-- <h5 class="card-title">Special title treatment</h5> -->
+        <p class="card-text">This is a deck</p>
+        <div class="d-grid gap-2 d-md-block">
+          <button type="button" class="btn btn-sm btn-success">
+            Play
+            <i class="bi bi-play-fill"></i>
+          </button>
+          <a
+            type="button"
+            class="btn btn-sm btn-primary"
+            href="{{url_for('cards', deck_id = deck.id)}}"
+          >
+            Inspect
+            <img id="img_icon" src="static/img/cartas.png" class="img-fluid" />
           </a>
+          <button type="button" class="btn btn-sm btn-danger delete-deck">
+            Del Deck
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
       </div>
-    </li>
-  </form>
+    </div>
+  </li>
+  {% endfor %}
+
+  <li class="list-group-item list-group-item-secondary">
+    <div class="card text-dark bg-light">
+      <div class="card-header">
+        <input
+          id="deck-name"
+          autocomplete="off"
+          autofocus
+          class="form-control mx-auto w-auto"
+          name="deck-name"
+          placeholder="Decks' Name"
+          type="text"
+        />
+      </div>
+      <div class="card-body">
+        <!-- <h5 class="card-title">Special title treatment</h5> -->
+        <p class="card-text">Create a deck to study something.</p>
+        <button id="add-deck" type="button" class="btn btn-sm btn-success">
+          <i class="bi bi-plus"></i>
+          Add Deck
+        </button>
+      </div>
+    </div>
+  </li>
 </ul>
 
 {% endblock %}

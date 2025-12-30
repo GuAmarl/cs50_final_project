@@ -1,8 +1,67 @@
-{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
-%}
+{% extends "layout.html" %} {% block js %}
+<script src="{{ url_for('static', filename='js/cards.js') }}"></script>
+{% endblock %} {% block title %} Index {% endblock %} {% block main %}
 
-<a type="button" class="btn btn-success" href="/cards">
-  <i class="bi bi-plus"></i>
-  Add Card
-</a>
+<div class="container">
+  <div class="row justify-content-between">
+    <div class="col-6">
+      <div class="input-group mb-3">
+        <input
+          id="front_card"
+          autocomplete="off"
+          autofocus
+          class="form-control w-auto me-2"
+          name="front_card"
+          placeholder="Front"
+          type="text"
+        />
+        <input
+          id="back_card"
+          autocomplete="off"
+          autofocus
+          class="form-control w-auto"
+          name="back_card"
+          placeholder="Back"
+          type="text"
+        />
+        <button id="add-card" type="button" class="btn btn-success">
+          <i class="bi bi-plus"></i>
+          Add Card
+        </button>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="input-group mb-3">
+        <input id="deck_id" value="{{deck_id}}" type="hidden" />
+        <input
+          id="search_card_input"
+          class="form-control w-auto"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <span class="input-group-text" id="addon-wrapping"
+          ><i class="bi bi-search"></i
+        ></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table id="table_cards" class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Front</th>
+      <th scope="col">Back</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in cards %}
+    <tr>
+      <td>{{card.front}}</td>
+      <td>{{card.back}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

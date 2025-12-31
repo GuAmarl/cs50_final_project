@@ -3,7 +3,8 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any
 
-from flask import redirect, session
+from cs50 import SQL  # type: ignore
+from flask import Config, redirect, session
 
 
 def login_required(f: Callable[..., Any]) -> Callable[..., Any]:
@@ -24,9 +25,9 @@ def login_required(f: Callable[..., Any]) -> Callable[..., Any]:
 
 # AGAIN (grade = 0)  # noqa: ERA001
 # User completely failed the card
-def handle_again(card: dict[str, Any], now: int) -> dict[str, Any]:
+def handle_again(config: Config, card: dict[str, Any], now: int) -> dict[str, Any]:
     # Penalize ease but never below minimum
-    ease = max(session["MIN_EASE"], card["ease"] - 0.2)
+    ease = max(config["MIN_EASE"], card["ease"] - 0.2)  # type: ignore
 
     # Move card to relearning phase
     # First relearning step for interval
@@ -34,22 +35,22 @@ def handle_again(card: dict[str, Any], now: int) -> dict[str, Any]:
     return {
         "state": "relearning",
         "step": 0,
-        "interval": session["RELEARNING_STEPS"][0],
+        "interval": config["RELEARNING_STEPS"][0],
         "ease": ease,
         "repetitions": 0,
-        "due": now + session["RELEARNING_STEPS"][0],
+        "due": now + config["RELEARNING_STEPS"][0],
     }
 
 
 # HARD (grade = 1)  # noqa: ERA001
 # User recalled with difficulty
-def handle_hard(card: dict[str, Any], now: int) -> dict[str, Any]:
-    ease = max(session["MIN_EASE"], card["ease"] - 0.15)
+def handle_hard(config: Config, card: dict[str, Any], now: int) -> dict[str, Any]:
+    ease = max(config["MIN_EASE"], card["ease"] - 0.15)  # type: ignore
 
     if card["state"] in ("learning", "relearning"):
         # Stay on the same step
-        step = min(card["step"], len(session["LEARNING_STEPS"]) - 1)
-        interval = session["LEARNING_STEPS"][step]
+        step = min(card["step"], len(config["LEARNING_STEPS"]) - 1)  # type: ignore
+        interval = config["LEARNING_STEPS"][step]  # type: ignore
         reps = card["repetitions"]
     else:
         # Review card: small interval increase
@@ -70,16 +71,16 @@ def handle_hard(card: dict[str, Any], now: int) -> dict[str, Any]:
 
 # GOOD (grade = 2)  # noqa: ERA001
 # User recalled correctly
-def handle_good(card: dict[str, Any], now: int) -> dict[str, Any]:
+def handle_good(config: Config, card: dict[str, Any], now: int) -> dict[str, Any]:
     if card["state"] in ("learning", "relearning"):
         step = card["step"] + 1
-        steps = (
-            session["LEARNING_STEPS"]
+        steps = (  # type: ignore
+            config["LEARNING_STEPS"]
             if card["state"] == "learning"
-            else session["RELEARNING_STEPS"]
+            else config["RELEARNING_STEPS"]
         )
 
-        if step < len(steps):
+        if step < len(steps):  # type: ignore
             # Continue learning steps
             return {
                 "state": card["state"],
@@ -121,13 +122,13 @@ def handle_good(card: dict[str, Any], now: int) -> dict[str, Any]:
 
 # EASY (grade = 3)  # noqa: ERA001
 # User recalled effortlessly
-def handle_easy(card: dict[str, Any], now: int) -> dict[str, Any]:
+def handle_easy(config: Config, card: dict[str, Any], now: int) -> dict[str, Any]:
     # Reward ease
-    ease = max(session["MIN_EASE"], card["ease"] + 0.15)
+    ease = max(config["MIN_EASE"], card["ease"] + 0.15)  # type: ignore
 
     if card["state"] in ("learning", "relearning"):
         # Skip remaining steps and go directly to review
-        interval = session["LEARNING_STEPS"][-1] * 2
+        interval = config["LEARNING_STEPS"][-1] * 2  # type: ignore
         return {
             "state": "review",
             "step": 0,
@@ -149,7 +150,7 @@ def handle_easy(card: dict[str, Any], now: int) -> dict[str, Any]:
     }
 
 
-def update_card(db, card_id: int, grade: int) -> str:  # type: ignore # noqa: ANN001
+def update_card(config: Config, db: SQL, card_id: int, grade: int) -> str:  # type: ignore
     """
     Update a flashcard scheduling parameters based on user feedback.
 
@@ -193,7 +194,7 @@ def update_card(db, card_id: int, grade: int) -> str:  # type: ignore # noqa: AN
     if not handler:
         return "INVALID_GRADE"
 
-    updated = handler(card, now)
+    updated = handler(config, card, now)
 
     # Persist changes
     db.execute(  # type: ignore

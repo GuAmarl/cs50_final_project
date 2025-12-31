@@ -1,3 +1,4 @@
+// Function to create a new card
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("add-card").addEventListener("click", async () => {
     const input_front = document.getElementById("front_card");
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       deck_id: deck_id,
     };
 
+    // Sends the info to create a new card
     const response = await fetch("/api/create_cards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -34,15 +36,17 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Waits to create the new card
     const card = await response.json();
 
+    // Create the table row element to place the new card
     let html = `<tr><td>${card[card.length - 1].front}</td><td>${
       card[card.length - 1].back
     }</td><td><button id=${
       card[card.length - 1].id
     } type="button" class="btn btn-sm btn-danger delete-card"><i class="bi bi-trash"></i></button></td></tr>`;
 
-    // INSERE ANTES do card de criação
+    // Insert as the last row
     const table_body = document.querySelector("tbody");
     table_body.innerHTML += html;
 
@@ -51,23 +55,26 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// Function to search for a card based on the content on its front
 document.addEventListener("DOMContentLoaded", function () {
   let input = document.getElementById("search_card_input");
   input.addEventListener("input", async function () {
-    // async function search_cards() {
     const input = document.getElementById("search_card_input");
     const deck_id = document.getElementById("deck_id").value;
 
     const table_body = document.querySelector("tbody");
 
+    // Sends the query and the deck_id
     let response = await fetch(
       "/api/search?q=" + input.value + "&deck_id=" + deck_id
     );
 
+    // Wait to find the cards corresponding to a query
     let cards = await response.json();
 
     let html = "";
 
+    // Add the table row HTML element for each card
     for (let i in cards) {
       html += `<tr><td>${cards[i].front}</td><td>${cards[i].back}</td><td>
         <button id=${cards[i].id} type="button" class="btn btn-sm btn-danger delete-card">
@@ -80,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// Function to delete a card
 document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("table_cards")
@@ -90,8 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const cardId = deleteBtn.id;
       const row = deleteBtn.closest("tr");
 
-      // if (!confirm("Deseja realmente deletar este card?")) return;
-
+      // Send the card id to delete it
       try {
         const response = await fetch(`/api/delete_card/${cardId}`, {
           method: "DELETE",
@@ -102,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        // Remove from table (DOM)
+        // Waits for the card to be deleted from the database, then removes it from the table (DOM).
         row.remove();
       } catch (error) {
         alert("Erro de conexão com o servidor");

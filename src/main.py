@@ -32,9 +32,9 @@ Session(app)
 db = SQL("sqlite:///cards.db")
 
 
-# session["LEARNING_STEPS"] = [600, 86400]  # 10 min, 1 day
-# session["RELEARNING_STEPS"] = [600]  # 10 min
-# session["MIN_EASE"] = 1.3
+app.config["LEARNING_STEPS"] = [600, 86400]  # 10 min, 1 day
+app.config["RELEARNING_STEPS"] = [600]  # 10 min
+app.config["MIN_EASE"] = 1.3
 
 
 @app.after_request
@@ -46,12 +46,10 @@ def after_request(response: Response) -> Response:
     return response
 
 
+# Homepage
 @app.route("/")
 @login_required
 def index() -> str:
-    session["LEARNING_STEPS"] = [600, 86400]  # 10 min, 1 day
-    session["RELEARNING_STEPS"] = [600]  # 10 min
-    session["MIN_EASE"] = 1.3
     return render_template("index.html")
 
 
@@ -92,7 +90,7 @@ def login() -> str | WerkzeugResponse | tuple[Any, int]:
 
         flash("You were successfully logged in", "success")
 
-        # Redirect user to home page
+        # Redirect user to homepage
         return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
@@ -160,12 +158,9 @@ def register() -> WerkzeugResponse | str | None:
 
 @app.route("/decks")  # type: ignore
 def decks() -> str:
-    # decks = db.execute(  # type: ignore
-    #     "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
-    #     "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
-    #     session["user_id"],
-    # )
+    """View all user decks"""
 
+    # num_play_cards is used to show the user how many cards are available to play
     decks = db.execute(  # type: ignore
         """SELECT
             d.id,
@@ -191,18 +186,38 @@ def decks() -> str:
 
 @app.route("/api/create_decks", methods=["POST"])  # type: ignore
 def create_deck() -> tuple[Response, Any]:
+    """API to get informations about users' decks and create a new one"""
+
+    # Getting the name of the new deck
     data = request.get_json()
     name = data.get("name")
 
     if not name:
         return jsonify({"error": "Must provide name"}), 400
 
+    # Creates a new deck in the db
     db.execute(  # type: ignore
         "INSERT INTO decks(user_id, name) VALUES(?, ?)", session["user_id"], name
     )
+
+    # Gets up-to-date informations about the user decks
     deck = db.execute(  # type: ignore
-        "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
-        "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
+        """SELECT
+            d.id,
+            d.name,
+
+            COUNT(c.id) AS card_count,
+
+            COUNT(
+                CASE
+                    WHEN c.due <= strftime('%s', 'now') THEN 1
+                END
+            ) AS num_play_cards
+
+        FROM decks d
+        LEFT JOIN cards c ON c.deck_id = d.id
+        WHERE d.user_id = ?
+        GROUP BY d.id, d.name""",
         session["user_id"],
     )
 
@@ -211,6 +226,8 @@ def create_deck() -> tuple[Response, Any]:
 
 @app.route("/api/delete_deck/<int:deck_id>", methods=["DELETE"])
 def delete_deck(deck_id: int) -> Response:
+    """API to delete a deck"""
+
     db.execute(  # type: ignore
         "DELETE FROM decks WHERE user_id = ? AND id = ?", session["user_id"], deck_id
     )
@@ -220,6 +237,8 @@ def delete_deck(deck_id: int) -> Response:
 
 @app.route("/cards/<int:deck_id>")  # type: ignore
 def cards(deck_id: int) -> WerkzeugResponse | str | None:
+    """Inspect all the cards in a deck"""
+
     cards = db.execute(  # type: ignore
         "SELECT id, front, back, deck_id FROM cards WHERE deck_id = ?", deck_id
     )
@@ -229,6 +248,9 @@ def cards(deck_id: int) -> WerkzeugResponse | str | None:
 
 @app.route("/api/create_cards", methods=["POST"])  # type: ignore
 def create_cards() -> tuple[Response, Any]:
+    """API to create a new card and return all updated cards from a deck"""
+
+    # Getting info about the new card
     data = request.get_json()
     front = data.get("front")
     back = data.get("back")
@@ -237,12 +259,13 @@ def create_cards() -> tuple[Response, Any]:
     if not front or not back:
         return jsonify({"error": "Missing inputs"}), 400
 
-    front = front.upper()
-    back = back.upper()
+    front = front.lower()
+    back = back.lower()
 
     now = int(time.time())
-    due = now + session["LEARNING_STEPS"][0] * 60
+    due = now + app.config["LEARNING_STEPS"][0]  # type: ignore
 
+    # Creating the new card
     db.execute(  # type: ignore
         "INSERT INTO cards(deck_id, front, back, state, due) VALUES(?, ?, ?, ?, ?)",
         deck_id,
@@ -258,6 +281,8 @@ def create_cards() -> tuple[Response, Any]:
 
 @app.route("/api/delete_card/<int:card_id>", methods=["DELETE"])
 def delete_card(card_id: int) -> Response:
+    """API to delete a card"""
+
     db.execute(  # type: ignore
         "DELETE FROM cards WHERE id = ?", card_id
     )
@@ -267,16 +292,21 @@ def delete_card(card_id: int) -> Response:
 
 @app.route("/api/search")
 def search() -> Response:
+    """API to search for a card based on the content on the front"""
+
+    # Getting the query and the deck id
     query = request.args.get("q")
     deck_id = request.args.get("deck_id")
 
+    # Searching for cards in the deck
     if query and deck_id:
-        query = query.upper()
+        query = query.lower()
         cards = db.execute(  # type: ignore
             "SELECT front, back FROM cards WHERE deck_id = ? AND front LIKE ?",
             deck_id,
             "%" + query + "%",
         )
+    # If there is no query, all cards are selected and displayed
     else:
         cards = db.execute(  # type: ignore
             "SELECT front, back FROM cards WHERE deck_id = ?", deck_id
@@ -287,6 +317,10 @@ def search() -> Response:
 
 @app.route("/play/<int:deck_id>")  # type: ignore
 def play(deck_id: int) -> WerkzeugResponse | str | None:
+    """Show the first playable card,
+    i.e. the card with lowest due value
+    that is less than or equal to the current time"""
+
     cards_to_play = db.execute(  # type: ignore
         "SELECT c.id, c.deck_id, d.name, c.front, c.back, c.state "
         "FROM cards as c JOIN decks as d "
@@ -298,6 +332,7 @@ def play(deck_id: int) -> WerkzeugResponse | str | None:
     if cards_to_play:
         cards_to_play = cards_to_play[0]  # type: ignore
 
+    # Gets the info on how many cards are playable
     num_cards = int(
         db.execute(  # type: ignore
             "SELECT COUNT(*) as num FROM cards "
@@ -314,6 +349,10 @@ def play(deck_id: int) -> WerkzeugResponse | str | None:
 
 @app.route("/api/play_cards", methods=["POST"])
 def play_cards() -> Response | tuple[Response, Any]:
+    """API to calculate, based on the SM-2 algorithm,
+    the new values of the card parameters
+    and when they can be played again"""
+
     data = request.get_json()
     grade = data.get("grade")
     card_id = data.get("card_id")
@@ -326,8 +365,10 @@ def play_cards() -> Response | tuple[Response, Any]:
     card_id = int(card_id)
     deck_id = int(deck_id)
 
-    update_card(db, card_id, grade)
+    # Does all the calculation needed
+    update_card(app.config, db, card_id, grade)
 
+    # Returns the 1st playable card
     cards_to_play = db.execute(  # type: ignore
         "SELECT c.id, d.name, c.front, c.back, c.state FROM cards as c JOIN decks as d "
         "ON c.deck_id = d.id WHERE deck_id = ? "

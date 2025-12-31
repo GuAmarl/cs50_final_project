@@ -1,26 +1,27 @@
 {% extends "layout.html" %} {% block js %}
 <script src="{{ url_for('static', filename='js/play.js') }}"></script>
-{% endblock %} {% block title %} Play {% endblock %} {% block main
+{% endblock %} {% block main
 %}
 
+<!-- Each playable card-->
 {% if num_cards > 0 %}
 <div class="deck-container">
   <div class="deck-wrapper">
-    <!-- Cartas do fundo -->
+    <!-- Back cards to compose the deck effect -->
     <div class="card deck-card back-2"></div>
     <div class="card deck-card back-1"></div>
     <div class="card flashcard text-dark bg-light">
       <div class="card-header">
         <div class="row align-items-center">
-          <!-- Coluna esquerda (vazia) -->
+          <!-- Empty left column -->
           <div class="col-4"></div>
 
-          <!-- Texto central -->
+          <!-- Text in the center -->
           <div id="{{cards_to_play.deck_id}}" class="deck_id col-4 text-center fw-semibold">
             {{cards_to_play.name}}
           </div>
 
-          <!-- Badge to the right -->
+          <!-- State badge of the card to the right -->
           <div id="state_badge" class="col-4 text-end">
             {% if cards_to_play.state == 'learning' %}
               <span class="badge bg-success ms-auto">
@@ -35,10 +36,12 @@
         </div>
       </div>
       <div class="card-body">
-        <!-- <h5 class="card-title">Special title treatment</h5> -->
+        <!-- Question and answer of the card -->
         <p class="flashcard-question">{{cards_to_play.front}}</p>
+        <!-- Answer starts hidden (d-none)-->
         <div class="flashcard-answer d-none mb-3">{{cards_to_play.back}}</div>
         <div class="d-grid gap-2 d-md-block">
+          <!-- Button to reveal the answer, hide the btn_answer and show btns_grade-->
           <button id="btn_answer" class="btn btn-sm btn-primary" onclick="show_answer(this)">Answer</button>
         </div>
         <div id="{{cards_to_play.id}}" class="btns_grade_div d-none gap-2">
@@ -52,6 +55,8 @@
   </div>
 </div>
 {% else %}
+
+<!-- Card to alert the user that all playable cards in this deck have already been played. -->
 <div class="container d-flex align-items-center justify-content-center">
     <div class="card shadow-sm text-center p-4">
       <div class="card-body">

@@ -1,29 +1,46 @@
-{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block
-main %}
-<div id="card_div">
-  <div class="card" id="card-login">
-    <div class="card-body">
-      <form action="{{url_for('login')}}" method="post">
+{% extends "layout.html" %} {% block main %}
+<div
+  id="card_div"
+  class="d-flex align-items-center justify-content-center mt-5"
+>
+  <div class="card shadow-lg" id="card-login">
+    <div class="card-body p-4">
+      <form action="{{ url_for('login') }}" method="post">
         <div class="mb-3">
           <input
             autocomplete="off"
             autofocus
-            class="form-control mx-auto w-auto"
+            class="form-control"
             name="username"
             placeholder="Username"
             type="text"
+            required
           />
         </div>
-        <div class="mb-3">
+
+        <div class="mb-4">
           <input
-            class="form-control mx-auto w-auto"
+            class="form-control"
             name="password"
             placeholder="Password"
             type="password"
+            required
           />
         </div>
-        <button class="btn btn-primary" type="submit">Log In</button>
+
+        <div class="d-grid">
+          <button class="btn btn-primary" type="submit">Log In</button>
+        </div>
       </form>
+
+      <p class="text-center text-muted mt-3 mb-0">
+        <span class="fw-bold text-primary">S</span>
+        <span class="fw-bold text-success">p</span>
+        <span class="fw-bold text-warning">a</span>
+        <span class="fw-bold text-danger">c</span>
+        <span class="fw-bold text-info">i</span>
+        <span class="fw-bold text-secondary">a</span>
+      </p>
     </div>
   </div>
 </div>

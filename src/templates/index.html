@@ -1,117 +1,90 @@
-{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
-%}
-<!-- Hero Section -->
-<section class="py-5">
-  <div class="container">
-    <div class="row align-items-center">
-      <h1 class="display-5 fw-bold">Learn Smarter with Smart Flashcards</h1>
-      <p class="lead text-muted mt-3">
-        Boost your memory using spaced repetition and intelligent scheduling.
-        Study less, remember more.
-      </p>
-    </div>
+{% extends "layout.html" %} {% block main %}
+<div class="container py-5">
+  <!-- Header -->
+  <div class="text-center py-5">
+    <h1 class="display-3 fw-bold">
+      <span class="fw-bold text-primary">S</span>
+      <span class="fw-bold text-success">p</span>
+      <span class="fw-bold text-warning">a</span>
+      <span class="fw-bold text-danger">c</span>
+      <span class="fw-bold text-info">i</span>
+      <span class="fw-bold text-secondary">a</span>
+    </h1>
+    <p class="lead text-muted">Smart flashcards with spaced repetition</p>
   </div>
-</section>
 
-<!-- Features -->
-<section class="py-5 bg-white">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Why Smart Flashcards?</h2>
-      <p class="text-muted">
-        Built on learning science and designed for efficiency.
-      </p>
-    </div>
+  <!-- Main card -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+          <h4 class="fw-semibold mb-3">How Spacia works</h4>
 
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">🧠 Spaced Repetition</h5>
-            <p class="card-text text-muted">
-              Review information at increasing intervals to build long-term
-              memory.
-            </p>
+          <p class="text-muted">
+            Spacia helps you remember information long-term by showing each
+            flashcard at the optimal time. It uses a scientifically backed
+            spaced repetition algorithm inspired by SM-2.
+          </p>
+
+          <hr class="my-4" />
+
+          <!-- Features -->
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="d-flex gap-3">
+                <i class="bi bi-lightbulb fs-4 text-primary"></i>
+                <div>
+                  <h6 class="fw-semibold mb-1">Smart scheduling</h6>
+                  <p class="text-muted small mb-0">
+                    Cards move through learning, review, and relearning stages
+                    automatically.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex gap-3">
+                <i class="bi bi-clock-history fs-4 text-primary"></i>
+                <div>
+                  <h6 class="fw-semibold mb-1">Optimal timing</h6>
+                  <p class="text-muted small mb-0">
+                    Reviews are scheduled in minutes, hours, or days based on
+                    your performance.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex gap-3">
+                <i class="bi bi-collection fs-4 text-primary"></i>
+                <div>
+                  <h6 class="fw-semibold mb-1">Deck-based study</h6>
+                  <p class="text-muted small mb-0">
+                    Organize flashcards into decks and focus on what matters.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex gap-3">
+                <i class="bi bi-check2-square fs-4 text-primary"></i>
+                <div>
+                  <h6 class="fw-semibold mb-1">Simple feedback</h6>
+                  <p class="text-muted small mb-0">
+                    Grade each card as Again, Hard, Good, or Easy.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">📈 Adaptive Learning</h5>
-            <p class="card-text text-muted">
-              Easy cards appear less often, difficult cards more frequently.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title fw-bold">⏱️ Time Efficient</h5>
-            <p class="card-text text-muted">
-              Spend less time reviewing and get better results.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- How It Works -->
-<section class="py-5">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">How It Works</h2>
-      <p class="text-muted">A simple and effective learning flow.</p>
-    </div>
-
-    <div class="row text-center g-4">
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="fw-bold">1. Create Cards</h5>
-            <p class="text-muted">
-              Add questions and answers for anything you want to learn.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="fw-bold">2. Review Daily</h5>
-            <p class="text-muted">
-              Review cards scheduled for today in short sessions.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="fw-bold">3. Remember Longer</h5>
-            <p class="text-muted">
-              The system adapts to your memory automatically.
-            </p>
-          </div>
+          <hr class="my-4" />
         </div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- Footer -->
-<footer class="py-4 bg-white border-top">
-  <div class="container text-center">
-    <p class="mb-1 fw-bold">SmartFlash</p>
-    <p class="text-muted mb-0">Built with learning science and simplicity.</p>
-  </div>
-</footer>
-
+</div>
 {% endblock %}

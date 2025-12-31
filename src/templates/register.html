@@ -1,32 +1,51 @@
-{% extends "layout.html" %} {% block title %} Register {% endblock %} {% block
-main %}
-<form action="{{url_for('register')}}" method="post">
-  <div class="mb-3">
-    <input
-      autocomplete="off"
-      autofocus
-      class="form-control mx-auto w-auto"
-      name="username"
-      placeholder="Username"
-      type="text"
-    />
+{% extends "layout.html" %} {% block main %}
+
+<div
+  id="card_div"
+  class="d-flex align-items-center justify-content-center mt-5"
+>
+  <div class="card shadow-lg" id="card-login">
+    <div class="card-body p-4">
+      <form action="{{url_for('register')}}" method="post">
+        <div class="mb-3">
+          <input
+            autocomplete="off"
+            autofocus
+            class="form-control mx-auto w-auto"
+            name="username"
+            placeholder="Username"
+            type="text"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            class="form-control mx-auto w-auto"
+            name="password"
+            placeholder="Password"
+            type="password"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            class="form-control mx-auto w-auto"
+            name="confirmation"
+            placeholder="Confirm password"
+            type="password"
+          />
+        </div>
+        <div class="d-grid">
+          <button class="btn btn-primary" type="submit">Register</button>
+        </div>
+      </form>
+      <p class="text-center text-muted mt-3 mb-0">
+        <span class="fw-bold text-primary">S</span>
+        <span class="fw-bold text-success">p</span>
+        <span class="fw-bold text-warning">a</span>
+        <span class="fw-bold text-danger">c</span>
+        <span class="fw-bold text-info">i</span>
+        <span class="fw-bold text-secondary">a</span>
+      </p>
+    </div>
   </div>
-  <div class="mb-3">
-    <input
-      class="form-control mx-auto w-auto"
-      name="password"
-      placeholder="Password"
-      type="password"
-    />
-  </div>
-  <div class="mb-3">
-    <input
-      class="form-control mx-auto w-auto"
-      name="confirmation"
-      placeholder="Confirm password"
-      type="password"
-    />
-  </div>
-  <button class="btn btn-primary" type="submit">Register</button>
-</form>
+</div>
 {% endblock %}

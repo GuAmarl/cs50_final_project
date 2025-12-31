@@ -1,7 +1,8 @@
 {% extends "layout.html" %} {% block js %}
 <script src="{{ url_for('static', filename='js/cards.js') }}"></script>
-{% endblock %} {% block title %} Cards {% endblock %} {% block main %}
+{% endblock %} {% block main %}
 
+<!-- Features for adding a new card and searching for cards -->
 <div class="container">
   <div class="row justify-content-between">
     <div class="col-6">
@@ -48,6 +49,7 @@
   </div>
 </div>
 
+<!-- Table showing all cards in the deck -->
 <table id="table_cards" class="table table-striped">
   <thead>
     <tr>

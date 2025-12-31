@@ -1,25 +1,32 @@
 {% extends "layout.html" %} {% block js %}
 <script src="{{ url_for('static', filename='js/decks.js') }}"></script>
-{% endblock %} {% block title %} Index {% endblock %} {% block main %}
+{% endblock %} {% block main %}
 
-<ul id="deck-list" class="list-group list-group-clean list-group-horizontal">
+<ul
+  id="deck-list"
+  class="list-group list-group-clean list-group-horizontal d-flex flex-nowrap overflow-auto"
+>
+  <!-- Show every deck that the user has -->
   {% for deck in decks %}
-  <li data-id="{{ deck.id }}" class="list-group-item list-group-item-secondary">
+  <li
+    data-id="{{ deck.id }}"
+    class="list-group-item list-group-item-secondary flex-shrink-0 me-3"
+  >
     <div class="deck-container">
       <div class="deck-wrapper">
-        <!-- Cartas do fundo -->
+        <!-- Back cards to compose the deck effect -->
         <div class="card deck-card back-2"></div>
         <div class="card deck-card back-1"></div>
         <div class="card flashcard text-dark bg-light">
           <div class="card-header">
             <div class="row align-items-center">
-              <!-- Coluna esquerda (vazia) -->
+              <!-- Empty left column -->
               <div class="col-4"></div>
 
-              <!-- Texto central -->
+              <!-- Text in the center -->
               <div class="col-4 text-center fw-semibold">{{ deck.name }}</div>
 
-              <!-- Badge à direita -->
+              <!-- Deck card count badge to the right -->
               <div class="col-4 text-end">
                 <span class="badge bg-secondary ms-auto">
                   {{deck.card_count}} Cards
@@ -28,14 +35,14 @@
             </div>
           </div>
           <div class="card-body">
-            <!-- <h5 class="card-title">Special title treatment</h5> -->
-            <p class="card-text">This is a deck</p>
+            <p class="card-text">Start study your cards!</p>
             <div class="d-grid gap-2 d-md-block">
               <a
                 type="button"
                 class="btn btn-sm btn-success position-relative"
                 href="{{url_for('play', deck_id = deck.id)}}"
               >
+                <!-- Display the number of playable cards as a badge if its higher than 0 -->
                 Play {% if deck.num_play_cards > 0 %}
                 <span
                   class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -70,7 +77,8 @@
   </li>
   {% endfor %}
 
-  <li class="list-group-item list-group-item-secondary">
+  <!-- Create another card to add a new deck -->
+  <li class="list-group-item list-group-item-secondary flex-shrink-0">
     <div class="deck-container">
       <div class="deck-wrapper">
         <div class="card deck-card back-2"></div>
@@ -88,7 +96,6 @@
             />
           </div>
           <div class="card-body">
-            <!-- <h5 class="card-title">Special title treatment</h5> -->
             <p class="card-text">Create a deck to study something.</p>
             <button id="add-deck" type="button" class="btn btn-sm btn-success">
               <i class="bi bi-plus"></i>

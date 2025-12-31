@@ -3,25 +3,23 @@ nav .navbar-brand {
   font-size: xx-large;
 }
 
+/* Display ul list group in center */
 .list-group {
   justify-content: center;
 }
 
+/* Size every element of the list  */
 .list-group-item {
   width: 20rem;
 }
 
-#img_icon {
-  width: 1rem;
-  height: 1rem;
-  filter: brightness(0) invert(1);
-}
-
+/* Remove border of list */
 .list-group-clean .list-group-item {
   background-color: transparent;
   border: none;
 }
 
+/* Organizing items from the deck of cards */
 .deck-container {
   min-height: 60vh;
   display: flex;
@@ -32,7 +30,7 @@ nav .navbar-brand {
 .deck-wrapper {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 26.25rem;
 }
 
 .deck-card {
@@ -43,7 +41,7 @@ nav .navbar-brand {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* Cartas de trás */
+/* Back card to compose the deck effect */
 .deck-card.back-1 {
   transform: translate(10px, 10px);
   opacity: 0.6;
@@ -56,6 +54,7 @@ nav .navbar-brand {
   z-index: 0;
 }
 
+/* Styling the smart flashcard for gameplay */
 .flashcard {
   position: relative;
   z-index: 2;
@@ -92,14 +91,11 @@ nav .navbar-brand {
   margin-top: 0.75rem;
 }
 
-/* .btns_grade {
-  visibility: hidden;
-} */
-
 .flashcard-footer button {
   font-size: 0.85rem;
 }
 
+/* Create a deck icon based on a bootstrap icon */
 .icon-deck {
   position: relative;
   display: inline-block;
@@ -115,7 +111,6 @@ nav .navbar-brand {
   color: currentColor;
 }
 
-/* cartas saem pela direita */
 .icon-deck i:nth-child(1) {
   transform: translate(2px, 2px);
   opacity: 0.4;
@@ -124,4 +119,18 @@ nav .navbar-brand {
 .icon-deck i:nth-child(2) {
   transform: translate(1.5px, 1.5px);
   opacity: 0.6;
+}
+
+/* Login and registration card style */
+#card-login {
+  border-radius: 16px;
+  border: none;
+  background: #ffffff;
+}
+
+/* A small tweak for bootstrap form control */
+.form-control {
+  border-radius: 10px;
+  padding-left: 14px;
+  border: 1px solid #ddd;
 }

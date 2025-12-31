@@ -1,12 +1,10 @@
-# YOUR PROJECT TITLE
+# Spacia
 
 #### Video Demo: <URL HERE>
 
 #### Description:
 
-# Spacia
-
-_A smart flashcards app based on spaced repetition._
+_Spacia is a smart flashcards app based on spaced repetition._
 
 Spacia is a web application for studying with **intelligent flashcards**, using **scientifically backed spaced repetition algorithms** (inspired by SM-2, used in Anki).  
 It helps users review information at the optimal time to maximize long-term retention.

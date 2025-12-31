@@ -89,9 +89,12 @@ nav .navbar-brand {
   font-size: 0.95rem;
   color: #495057;
   border-left: 3px solid #0d6efd;
-  padding-left: 0.75rem;
   margin-top: 0.75rem;
 }
+
+/* .btns_grade {
+  visibility: hidden;
+} */
 
 .flashcard-footer button {
   font-size: 0.85rem;

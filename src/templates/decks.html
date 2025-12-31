@@ -14,15 +14,14 @@
           <div class="card-header">
             <div class="row align-items-center">
               <!-- Coluna esquerda (vazia) -->
-              <div class="col-3"></div>
+              <div class="col-4"></div>
 
               <!-- Texto central -->
               <div class="col-4 text-center fw-semibold">{{ deck.name }}</div>
 
               <!-- Badge à direita -->
-              <div class="col-5 text-end">
+              <div class="col-4 text-end">
                 <span class="badge bg-secondary ms-auto">
-                  <i class="bi bi-file-fill"></i>
                   {{deck.card_count}} Cards
                 </span>
               </div>
@@ -34,10 +33,17 @@
             <div class="d-grid gap-2 d-md-block">
               <a
                 type="button"
-                class="btn btn-sm btn-success"
+                class="btn btn-sm btn-success position-relative"
                 href="{{url_for('play', deck_id = deck.id)}}"
               >
-                Play
+                Play {% if deck.num_play_cards > 0 %}
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >
+                  {{deck.num_play_cards}}
+                  <span class="visually-hidden">playable cards</span>
+                </span>
+                {% endif %}
                 <i class="bi bi-play-fill"></i>
               </a>
               <a

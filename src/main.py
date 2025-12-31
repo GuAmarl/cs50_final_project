@@ -17,12 +17,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.wrappers import Response as WerkzeugResponse
 
 from flask_session import Session  # type: ignore
-from helpers import login_required
+from helpers import login_required, update_card  # type: ignore
 
 # Configure application
 app = Flask(__name__)
-
-LEARNING_STEPS = [10, 60, 1440]  # minutes
 
 
 # Configure session to use filesystem (instead of signed cookies)
@@ -32,6 +30,11 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///cards.db")
+
+
+# session["LEARNING_STEPS"] = [600, 86400]  # 10 min, 1 day
+# session["RELEARNING_STEPS"] = [600]  # 10 min
+# session["MIN_EASE"] = 1.3
 
 
 @app.after_request
@@ -46,6 +49,9 @@ def after_request(response: Response) -> Response:
 @app.route("/")
 @login_required
 def index() -> str:
+    session["LEARNING_STEPS"] = [600, 86400]  # 10 min, 1 day
+    session["RELEARNING_STEPS"] = [600]  # 10 min
+    session["MIN_EASE"] = 1.3
     return render_template("index.html")
 
 
@@ -154,9 +160,29 @@ def register() -> WerkzeugResponse | str | None:
 
 @app.route("/decks")  # type: ignore
 def decks() -> str:
+    # decks = db.execute(  # type: ignore
+    #     "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
+    #     "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
+    #     session["user_id"],
+    # )
+
     decks = db.execute(  # type: ignore
-        "SELECT d.id, d.name, COUNT(c.id) AS card_count FROM decks d LEFT JOIN cards c "
-        "ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id, d.name;",
+        """SELECT
+            d.id,
+            d.name,
+
+            COUNT(c.id) AS card_count,
+
+            COUNT(
+                CASE
+                    WHEN c.due <= strftime('%s', 'now') THEN 1
+                END
+            ) AS num_play_cards
+
+        FROM decks d
+        LEFT JOIN cards c ON c.deck_id = d.id
+        WHERE d.user_id = ?
+        GROUP BY d.id, d.name""",
         session["user_id"],
     )
 
@@ -215,7 +241,7 @@ def create_cards() -> tuple[Response, Any]:
     back = back.upper()
 
     now = int(time.time())
-    due = now + LEARNING_STEPS[0] * 60
+    due = now + session["LEARNING_STEPS"][0] * 60
 
     db.execute(  # type: ignore
         "INSERT INTO cards(deck_id, front, back, state, due) VALUES(?, ?, ?, ?, ?)",
@@ -261,7 +287,58 @@ def search() -> Response:
 
 @app.route("/play/<int:deck_id>")  # type: ignore
 def play(deck_id: int) -> WerkzeugResponse | str | None:
-    return render_template("play.html")
+    cards_to_play = db.execute(  # type: ignore
+        "SELECT c.id, c.deck_id, d.name, c.front, c.back, c.state "
+        "FROM cards as c JOIN decks as d "
+        "ON c.deck_id = d.id WHERE deck_id = ? "
+        "AND due <= strftime('%s', 'now') ORDER BY due LIMIT 1",
+        deck_id,
+    )
+
+    if cards_to_play:
+        cards_to_play = cards_to_play[0]  # type: ignore
+
+    num_cards = int(
+        db.execute(  # type: ignore
+            "SELECT COUNT(*) as num FROM cards "
+            "WHERE deck_id = ? "
+            "AND due <= strftime('%s', 'now')",
+            deck_id,
+        )[0]["num"]
+    )
+
+    return render_template(
+        "play.html", cards_to_play=cards_to_play, num_cards=num_cards
+    )
+
+
+@app.route("/api/play_cards", methods=["POST"])
+def play_cards() -> Response | tuple[Response, Any]:
+    data = request.get_json()
+    grade = data.get("grade")
+    card_id = data.get("card_id")
+    deck_id = data.get("deck_id")
+
+    if grade not in (0, 1, 2, 3):
+        return jsonify({"error": "Invalid grade"}), 400
+
+    grade = int(grade)
+    card_id = int(card_id)
+    deck_id = int(deck_id)
+
+    update_card(db, card_id, grade)
+
+    cards_to_play = db.execute(  # type: ignore
+        "SELECT c.id, d.name, c.front, c.back, c.state FROM cards as c JOIN decks as d "
+        "ON c.deck_id = d.id WHERE deck_id = ? "
+        "AND due <= strftime('%s', 'now') ORDER BY due LIMIT 1",
+        deck_id,
+    )
+
+    if not cards_to_play:
+        return jsonify({"done": True})
+
+    return jsonify(cards_to_play[0])
 
 
 if __name__ == "__main__":

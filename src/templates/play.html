@@ -1,6 +1,9 @@
-{% extends "layout.html" %} {% block title %} Index {% endblock %} {% block main
+{% extends "layout.html" %} {% block js %}
+<script src="{{ url_for('static', filename='js/play.js') }}"></script>
+{% endblock %} {% block title %} Play {% endblock %} {% block main
 %}
 
+{% if num_cards > 0 %}
 <div class="deck-container">
   <div class="deck-wrapper">
     <!-- Cartas do fundo -->
@@ -10,32 +13,69 @@
       <div class="card-header">
         <div class="row align-items-center">
           <!-- Coluna esquerda (vazia) -->
-          <div class="col-3"></div>
+          <div class="col-4"></div>
 
           <!-- Texto central -->
-          <div class="col-4 text-center fw-semibold">deck name</div>
+          <div id="{{cards_to_play.deck_id}}" class="deck_id col-4 text-center fw-semibold">
+            {{cards_to_play.name}}
+          </div>
 
-          <!-- Badge à direita -->
-          <div class="col-5 text-end">
-            <span class="badge bg-secondary ms-auto">
-              <i class="bi bi-file-fill"></i>
-              8 Cards
+          <!-- Badge to the right -->
+          <div id="state_badge" class="col-4 text-end">
+            {% if cards_to_play.state == 'learning' %}
+              <span class="badge bg-success ms-auto">
+            {% elif cards_to_play.state == 'review' %}
+              <span class="badge bg-primary ms-auto">    
+            {% elif cards_to_play.state == 'relearning' %}
+              <span class="badge bg-warning ms-auto">      
+            {% endif %}
+            {{cards_to_play.state}}
             </span>
           </div>
         </div>
       </div>
       <div class="card-body">
         <!-- <h5 class="card-title">Special title treatment</h5> -->
-        <p class="flashcard-question">O que é uma lista em Python?</p>
-        <div class="flashcard-answer mb-2">
-          Uma lista é uma estrutura de dados mutável que armazena elementos de
-          forma ordenada.
-        </div>
+        <p class="flashcard-question">{{cards_to_play.front}}</p>
+        <div class="flashcard-answer d-none mb-3">{{cards_to_play.back}}</div>
         <div class="d-grid gap-2 d-md-block">
-          <button class="btn btn-sm btn-primary">Answer</button>
+          <button id="btn_answer" class="btn btn-sm btn-primary" onclick="show_answer(this)">Answer</button>
+        </div>
+        <div id="{{cards_to_play.id}}" class="btns_grade_div d-none gap-2">
+          <button class="btns_grade btn btn-sm btn-danger" value="0" >Again</button>
+          <button class="btns_grade btn btn-sm btn-warning" value="1">Hard</button>
+          <button class="btns_grade btn btn-sm btn-primary" value="2">Good</button>
+          <button class="btns_grade btn btn-sm btn-success" value="3">Easy</button>
         </div>
       </div>
     </div>
-    {% endblock %}
   </div>
 </div>
+{% else %}
+<div class="container d-flex align-items-center justify-content-center">
+    <div class="card shadow-sm text-center p-4">
+      <div class="card-body">
+
+        <h1 class="display-6 mb-3">
+          <span class="material-symbols-outlined">
+          celebration
+          </span>
+          All Done!
+        </h1>
+
+        <p class="text-muted mb-4">
+          There are no cards left to play right now.<br>
+          Come back later or review another deck.
+        </p>
+
+        <div class="d-grid gap-2">
+          <a href="{{url_for('decks')}}" class="btn btn-primary">
+            Back to Decks
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

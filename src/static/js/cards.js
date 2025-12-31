@@ -35,11 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const card = await response.json();
-    console.log(card);
 
     let html = `<tr><td>${card[card.length - 1].front}</td><td>${
       card[card.length - 1].back
-    }</td></tr>`;
+    }</td><td><button id=${
+      card[card.length - 1].id
+    } type="button" class="btn btn-sm btn-danger delete-card"><i class="bi bi-trash"></i></button></td></tr>`;
 
     // INSERE ANTES do card de criação
     const table_body = document.querySelector("tbody");

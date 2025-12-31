@@ -4,9 +4,9 @@
 
 #### Description:
 
-_Spacia is a smart flashcards app based on spaced repetition._
+_A smart flashcards app based on spaced repetition._
 
-Spacia is a web application for studying with **intelligent flashcards**, using **scientifically backed spaced repetition algorithms** (inspired by SM-2, used in Anki).  
+Spacia is a web application for studying with **intelligent flashcards**, using **scientifically backed spaced repetition algorithms** (inspired by SM-2).  
 It helps users review information at the optimal time to maximize long-term retention.
 
 ---
@@ -43,10 +43,10 @@ After each review, the user grades the card:
 
 Based on this feedback, Spacia recalculates:
 
-- the next review time (`due`)
-- the interval
-- the ease factor
-- the repetition count
+- The next review time (`due`)
+- The interval
+- The ease factor
+- The repetition count
 
 All timestamps are stored in **UTC** for consistency.
 
@@ -54,7 +54,8 @@ All timestamps are stored in **UTC** for consistency.
 
 ## Tech Stack
 
-- **Backend:** Python, Uv, Flask
+- **Organization:** Uv, Ruff, Pywrigth
+- **Backend:** Python, Flask
 - **Database:** SQLite3
 - **Frontend:** HTML, CSS, JavaScript
 - **Styling:** Bootstrap 5

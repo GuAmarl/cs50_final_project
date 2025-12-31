@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
           </div>
           <div class="card-body">
-            <p class="card-text">This is a deck</p>
+            <p class="card-text">Start study your cards!</p>
             <div class="d-grid gap-2 d-md-block">
               <a
                 type="button"
